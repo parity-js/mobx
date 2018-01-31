@@ -37,7 +37,7 @@ const mockApi = {
 };
 
 test('should be a singleton store when using static get', () => {
-  const baseStore = createMobxStore(mockJsonrpcMethod);
+  const baseStore = createMobxStore()(mockJsonrpcMethod)();
   const store1 = baseStore.get(mockApi);
   const store2 = baseStore.get(mockApi);
 
@@ -45,23 +45,23 @@ test('should be a singleton store when using static get', () => {
 });
 
 test('should handle store options', () => {
-  const store = createMobxStore(mockJsonrpcMethod, {
+  const store = createMobxStore({
     variableName: 'foo',
     defaultValue: 'bar'
-  }).get(mockApi);
+  })(mockJsonrpcMethod)().get(mockApi);
 
   expect(store.foo).toBe('bar');
 });
 
 test('should handle setResult', () => {
-  const store = createMobxStore(mockJsonrpcMethod).get(mockApi);
+  const store = createMobxStore()(mockJsonrpcMethod)().get(mockApi);
   store.setFakeVariable(mockResult);
 
   expect(toJS(store.fakeVariable)).toEqual(mockResult);
 });
 
 test('should handle setError', () => {
-  const store = createMobxStore(mockJsonrpcMethod).get(mockApi);
+  const store = createMobxStore()(mockJsonrpcMethod)().get(mockApi);
   store.setError(mockError);
 
   expect(toJS(store.error)).toEqual(mockError);
@@ -71,7 +71,7 @@ test('should setResult when pubsub publishes', () => {
   const mockPubSub = callback => {
     setTimeout(() => callback(null, mockResult), 200); // Simulate pubsub with a 200ms timeout
   };
-  const store = createMobxStore(mockJsonrpcMethod).get({
+  const store = createMobxStore()(mockJsonrpcMethod)().get({
     pubsub: {
       parity: { fakeVariable: mockPubSub }
     }
@@ -87,7 +87,7 @@ test('should setError when pubsub throws error', () => {
   const mockPubSub = callback => {
     setTimeout(() => callback(mockError, null), 200); // Simulate pubsub with a 200ms timeout
   };
-  const store = createMobxStore(mockJsonrpcMethod).get({
+  const store = createMobxStore()(mockJsonrpcMethod)().get({
     pubsub: {
       parity: { fakeVariable: mockPubSub }
     }

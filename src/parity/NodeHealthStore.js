@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendObservable } from 'mobx';
+import { computed } from 'mobx';
 
 import createMobxStore from '../utils/createMobxStore';
 
@@ -22,17 +22,29 @@ export const STATUS_OK = 'ok';
 export const STATUS_WARN = 'needsAttention';
 export const STATUS_BAD = 'bad';
 
-const instance = createMobxStore('parity_nodeHealth', {
-  variableName: 'health',
+const BaseStore = createMobxStore({
   defaultValue: {}
-});
+})('parity_nodeHealth')();
 
-extendObservable(instance, {
+class NodeHealthStore extends BaseStore {
+  /**
+   * The public getter to access the Mobx store
+   * @param {Object} api The @parity/api object
+   */
+  static get (api) {
+    if (!this.instance) {
+      // We are enforcing Mobx stores to be singletons.
+      this.instance = new NodeHealthStore(api);
+    }
+    return this.instance;
+  }
+
   /**
    * Get overall health of node
    */
+  @computed
   get overall () {
-    if (!this.health || !Object.keys(this.health).length) {
+    if (!this.nodeHealth || !Object.keys(this.nodeHealth).length) {
       return {
         status: STATUS_BAD,
         message: ['Unable to fetch node health.']
@@ -40,19 +52,19 @@ extendObservable(instance, {
     }
 
     // Find out if there are bad statuses
-    const bad = Object.values(this.health)
+    const bad = Object.values(this.nodeHealth)
       .filter(x => x)
       .map(({ status }) => status)
       .find(s => s === STATUS_BAD);
     // Find out if there are needsAttention statuses
-    const needsAttention = Object.keys(this.health)
+    const needsAttention = Object.keys(this.nodeHealth)
       .filter(key => key !== 'time')
-      .map(key => this.health[key])
+      .map(key => this.nodeHealth[key])
       .filter(x => x)
       .map(({ status }) => status)
       .find(s => s === STATUS_WARN);
     // Get all non-empty messages from all statuses
-    const message = Object.values(this.health)
+    const message = Object.values(this.nodeHealth)
       .map(({ message }) => message)
       .filter(x => x);
 
@@ -61,6 +73,6 @@ extendObservable(instance, {
       message
     };
   }
-});
+}
 
-export default instance;
+export default NodeHealthStore;

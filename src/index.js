@@ -18,14 +18,8 @@ import methodGroups, {
   allMethods,
   methodGroupFromMethod
 } from './methodGroups';
+import getStore from './utils/getStore';
 
 export { methodGroups, allMethods, methodGroupFromMethod };
 
-export * from './accounts';
-export * from './dapps';
-export * from './eth';
-export * from './mining';
-export * from './network';
-export * from './node';
-export * from './other';
-export * from './signer';
+export default getStore;

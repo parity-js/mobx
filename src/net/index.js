@@ -14,4 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-export { default as HardwareStore } from './HardwareStore';
+const stores = {};
+
+export default stores;

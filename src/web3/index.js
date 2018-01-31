@@ -14,12 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import createMobxStore from '../utils/createMobxStore';
+const stores = {};
 
-const instance = createMobxStore('parity_getBlockHeaderByNumber', {
-  variableName: 'latestBlock',
-  defaultValue: {},
-  displayName: 'LatestBlockStore'
-});
-
-export default instance;
+export default stores;

@@ -14,19 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendObservable } from 'mobx';
+const stores = {};
 
-import createMobxStore from '../utils/createMobxStore';
-
-const instance = createMobxStore('parity_extraData');
-
-extendObservable(instance, {
-  /**
-   * Save extra data
-   */
-  saveExtraData: function (extraData) {
-    return this._api.parity.setExtraData(extraData);
-  }
-});
-
-export default instance;
+export default stores;

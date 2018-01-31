@@ -1,7 +1,7 @@
 {
   "name": "@parity/mobx",
   "description": "Parity MobX Stores",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "main": "lib/index.js",
   "module": "lib/index.js",
   "jsnext:main": "lib/index.js",
@@ -49,7 +49,8 @@
     "semistandard": "^12.0.0"
   },
   "dependencies": {
-    "@parity/ledger": "^2.1.2"
+    "@parity/ledger": "^2.1.2",
+    "is-class": "^0.0.4"
   },
   "peerDependencies": {
     "mobx": "^3.4.1"

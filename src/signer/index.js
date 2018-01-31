@@ -14,4 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-export { default as SignerStore } from './SignerStore';
+import createMobxStore from '../utils/createMobxStore';
+
+const stores = {
+  RequestsToConfirmStore: createMobxStore({ defaultValue: [] })
+};
+
+export default stores;

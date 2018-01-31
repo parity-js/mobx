@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { action, extendObservable } from 'mobx';
+import { action, extendObservable, observable } from 'mobx';
 
 import capitalize from './capitalize';
 
@@ -23,7 +23,7 @@ import capitalize from './capitalize';
  * @param {String} jsonRpcMethod The JSONRPC method to create a MobX store for
  * @param {Object} storeOptions Optional options to pass when creating the MobX store
  */
-const createMobxStore = (jsonRpcMethod, storeOptions = {}) => {
+const createMobxStore = (storeOptions = {}) => jsonRpcMethod => (...params) => {
   // Split the JSONRPC method into namespace and method
   // E.g. parity_nodeHealth -> ['parity', 'nodeHealth']
   const [namespace, method] = jsonRpcMethod.split('_');
@@ -36,45 +36,53 @@ const createMobxStore = (jsonRpcMethod, storeOptions = {}) => {
     ...storeOptions
   };
 
-  return {
-    /**
-     * Action setter for the main variable of the store
-     * E.g. in NodeHealthStore, this would be @action setHealth()
-     */
-    [`set${capitalize(options.variableName)}`]: action(function (result) {
-      this[options.variableName] = result;
-    }),
+  return class ParityMobxStore {
+    @observable error = null;
 
-    /**
-     * Action setter for the error
-     */
-    setError: action(function (error) {
-      this.error = error;
-    }),
+    static instance; // Ensure singleton
+
+    constructor (api) {
+      this._api = api;
+
+      // The main observable of this store, the one tracking the pubsub values
+      // from the api
+      extendObservable(this, {
+        [options.variableName]: options.defaultValue
+      });
+
+      // Subscribe to Parity pubsub
+      this._api.pubsub[namespace][method]((error, result) => {
+        this.setError(error);
+        this[`set${capitalize(options.variableName)}`](result);
+      });
+
+      /**
+       * Action setter for the main variable of the store
+       * E.g. in NodeHealthStore, this would be @action setHealth()
+       */
+      this[`set${capitalize(options.variableName)}`] = action(result => {
+        this[options.variableName] = result;
+      });
+    }
 
     /**
      * The public getter to access the Mobx store
      * @param {Object} api The @parity/api object
      */
-    get (api) {
-      if (!this[options.variableName]) {
-        // We are enforcing Mobx stores to be singletons. If we didn't populate
-        // the current store with the main variable, then it's the 1st time the
-        // user is accessing the store, so we populate with observables.
-        extendObservable(this, {
-          [options.variableName]: options.defaultValue,
-          error: null
-        });
-
-        this._api = api;
-
-        // Subscribe to Parity pubsub
-        this._api.pubsub[namespace][method]((error, result) => {
-          this.setError(error);
-          this[`set${capitalize(options.variableName)}`](result);
-        });
+    static get (api) {
+      if (!this.instance) {
+        // We are enforcing Mobx stores to be singletons.
+        this.instance = new ParityMobxStore(api);
       }
-      return this;
+      return this.instance;
+    }
+
+    /**
+     * Action setter for the error
+     */
+    @action
+    setError (error) {
+      this.error = error;
     }
   };
 };

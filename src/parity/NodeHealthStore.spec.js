@@ -37,7 +37,7 @@ const mockApi = {
 
 test('should handle overall without health', () => {
   const store = NodeHealthStore.get(mockApi);
-  store.setHealth({});
+  store.setNodeHealth({});
 
   expect(store.overall).toEqual({
     status: STATUS_BAD,
@@ -47,14 +47,14 @@ test('should handle overall without health', () => {
 
 test('should handle overall bad', () => {
   const store = NodeHealthStore.get(mockApi);
-  store.setHealth({ time: mockHealth.time });
+  store.setNodeHealth({ time: mockHealth.time });
 
   expect(store.overall).toEqual({ status: STATUS_BAD, message: ['bad'] });
 });
 
 test('should handle overall needsAttention', () => {
   const store = NodeHealthStore.get(mockApi);
-  store.setHealth({ sync: mockHealth.sync });
+  store.setNodeHealth({ sync: mockHealth.sync });
 
   expect(store.overall).toEqual({
     status: STATUS_WARN,
@@ -64,7 +64,7 @@ test('should handle overall needsAttention', () => {
 
 test('should handle overall ok', () => {
   const store = NodeHealthStore.get(mockApi);
-  store.setHealth({ peers: mockHealth.peers });
+  store.setNodeHealth({ peers: mockHealth.peers });
 
   expect(store.overall).toEqual({ status: STATUS_OK, message: [] });
 });

@@ -15,7 +15,15 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import createMobxStore from '../utils/createMobxStore';
+import DevLogsStore from './DevLogsStore';
+import NetPeersStore from './NetPeersStore';
+import NodeHealthStore from './NodeHealthStore';
 
-const instance = createMobxStore('parity_devLogsLevels');
+const stores = {
+  AllAccountsInfoStore: createMobxStore({ defaultValue: {} }),
+  DevLogsStore,
+  NetPeersStore,
+  NodeHealthStore
+};
 
-export default instance;
+export default stores;

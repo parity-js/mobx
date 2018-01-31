@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import createMobxStore from '../utils/createMobxStore';
+import DappsPersmissionsStore from './DappsPermissionsStore';
+import DappsStore from './DappsStore';
 
-const instance = createMobxStore('parity_enode');
+const stores = { DappsPersmissionsStore, DappsStore };
 
-export default instance;
+export default stores;

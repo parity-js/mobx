@@ -14,18 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendObservable } from 'mobx';
+import { computed } from 'mobx';
 
 import createMobxStore from '../utils/createMobxStore';
 
-const instance = createMobxStore('parity_netPeers', {
+const BaseStore = createMobxStore({
   defaultValue: {}
-});
+})('parity_netPeers')();
 
-extendObservable(instance, {
+class NetPeersStore extends BaseStore {
+  /**
+   * The public getter to access the Mobx store
+   * @param {Object} api The @parity/api object
+   */
+  static get (api) {
+    if (!this.instance) {
+      // We are enforcing Mobx stores to be singletons.
+      this.instance = new NetPeersStore(api);
+    }
+    return this.instance;
+  }
+
   /**
    * Get real network peers
    */
+  @computed
   get realPeers () {
     if (!this.netPeers.peers) return [];
     return this.netPeers.peers
@@ -37,35 +50,35 @@ extendObservable(instance, {
       .sort((peerA, peerB) => {
         return peerA.id.localeCompare(peerB.id);
       });
-  },
+  }
 
   /**
    * Accept non-reserved peers
    */
-  acceptNonReservedPeers: function () {
+  acceptNonReservedPeers () {
     return this._api.parity.acceptNonReservedPeers();
-  },
+  }
 
   /**
    * Add reserved peers
    */
-  addReservedPeer: function (enode) {
+  addReservedPeer (enode) {
     return this._api.parity.addReservedPeer(enode);
-  },
+  }
 
   /**
    * Drop non-reserved peers
    */
-  dropNonReservedPeers: function () {
+  dropNonReservedPeers () {
     return this._api.parity.dropNonReservedPeers();
-  },
+  }
 
   /**
    * Remove reserved peers
    */
-  removeReservedPeer: function (enode) {
+  removeReservedPeer (enode) {
     return this._api.parity.removeReservedPeer(enode);
   }
-});
+}
 
-export default instance;
+export default NetPeersStore;
