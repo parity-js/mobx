@@ -54,7 +54,7 @@ const createMobxStore = (storeOptions = {}) => jsonRpcMethod => (...params) => {
       this._api.pubsub[namespace][method]((error, result) => {
         this.setError(error);
         this[`set${capitalize(options.variableName)}`](result);
-      });
+      }, ...params);
 
       /**
        * Action setter for the main variable of the store

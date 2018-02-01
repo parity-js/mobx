@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import createMobxStore from '../utils/createMobxStore';
+import RequestsToConfirmStore from './RequestsToConfirmStore';
 
 const stores = {
-  RequestsToConfirmStore: createMobxStore({ defaultValue: [] })
+  RequestsToConfirmStore
 };
 
 export default stores;

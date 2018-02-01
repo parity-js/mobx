@@ -31,7 +31,7 @@ const getStore = jsonRpcMethod => (...params) => {
 
   // If this storeId doesn't exist, we create a singleton for it
   if (!stores[storeId]) {
-    const namespaceStores = require(`../${namespace}/index`).default;
+    const namespaceStores = require(`../${namespace}`).default;
     // If the store is overridden in the namespace folder, then take that one
     // Else fallback to create a default store
     const factory =
