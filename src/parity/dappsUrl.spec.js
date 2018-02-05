@@ -16,27 +16,29 @@
 
 /* eslint-env jest */
 
-import createMobxStore from './createMobxStore';
-import { basicStoreTests } from './testHelpers';
+import dappsUrlFactory from './dappsUrl';
+import { basicStoreTests } from '../utils/testHelpers';
 
-// Mocks
 const mockApi = {
   pubsub: {
     parity: {
-      fakeVariable: () => {} // Mock an API for parity_fakeVariable
+      dappsUrl: () => {}
     }
   }
 };
 
-test('should handle store options', () => {
-  const store = createMobxStore({
-    variableName: 'foo',
-    defaultValue: 'bar'
-  })('parity')('fakeVariable')().get(mockApi);
+basicStoreTests('parity')('dappsUrl')(dappsUrlFactory)();
 
-  expect(store.foo).toBe('bar');
+test('should handle fullUrl with partial dappsUrl', () => {
+  const store = dappsUrlFactory().get(mockApi);
+  store.setDappsUrl('127.0.0.1:8545');
+
+  expect(store.fullUrl).toEqual('about://127.0.0.1:8545'); // Protocol is about:// in tests
 });
 
-basicStoreTests('parity')('fakeVariable')(
-  createMobxStore()('parity')('fakeVariable')
-)();
+test('should handle fullUrl with full dappsUrl', () => {
+  const store = dappsUrlFactory().get(mockApi);
+  store.setDappsUrl('http://127.0.0.1:8545');
+
+  expect(store.fullUrl).toEqual('http://127.0.0.1:8545');
+});

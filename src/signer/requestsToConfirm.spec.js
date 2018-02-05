@@ -14,13 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import methodGroups, {
-  allMethods,
-  methodGroupFromMethod
-} from './methodGroups';
-import getStore from './utils/getStore';
-import stores from './stores';
+/* eslint-env jest */
 
-export { methodGroups, allMethods, methodGroupFromMethod };
+import requestsToConfirmFactory from './requestsToConfirm';
+import { basicStoreTests } from '../utils/testHelpers';
 
-export default stores;
+const mockApi = {
+  signer: {
+    requestsToConfirm: () => Promise.resolve()
+  }
+};
+
+basicStoreTests('signer')('requestsToConfirm')(requestsToConfirmFactory)({
+  mockApi
+});

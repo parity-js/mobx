@@ -14,13 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import methodGroups, {
-  allMethods,
-  methodGroupFromMethod
-} from './methodGroups';
-import getStore from './utils/getStore';
-import stores from './stores';
+import { computed } from 'mobx';
+import createMobxStore from '../utils/createMobxStore';
 
-export { methodGroups, allMethods, methodGroupFromMethod };
+const dappsUrlFactory = (...params) => {
+  const BaseStore = createMobxStore({})('parity')('dappsUrl')(...params);
 
-export default stores;
+  return class DappsUrlStore extends BaseStore {
+    /**
+     * Get the full url
+     */
+    @computed
+    get fullUrl () {
+      return this.dappsUrl && this.dappsUrl.includes('//')
+        ? this.dappsUrl
+        : `${window.location.protocol}//${this.dappsUrl}`;
+    }
+  };
+};
+
+export default dappsUrlFactory;

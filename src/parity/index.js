@@ -14,13 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import methodGroups, {
-  allMethods,
-  methodGroupFromMethod
-} from './methodGroups';
-import getStore from './utils/getStore';
-import stores from './stores';
+import createMobxStore from '../utils/createMobxStore';
+import dappsUrl from './dappsUrl';
+import devLogs from './devLogs';
+import netPeers from './netPeers';
+import nodeHealth from './nodeHealth';
 
-export { methodGroups, allMethods, methodGroupFromMethod };
+const stores = {
+  allAccountsInfo: createMobxStore({ defaultValue: {} })('parity')(
+    'allAccountsInfo'
+  ),
+  dappsUrl,
+  devLogs,
+  netPeers,
+  nodeHealth
+};
 
 export default stores;

@@ -14,13 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import methodGroups, {
-  allMethods,
-  methodGroupFromMethod
-} from './methodGroups';
-import getStore from './utils/getStore';
-import stores from './stores';
+import createMobxStore from '../utils/createMobxStore';
 
-export { methodGroups, allMethods, methodGroupFromMethod };
+const requestsToConfirmFactory = (...params) => {
+  const BaseStore = createMobxStore({
+    defaultValue: []
+  })('signer')('requestsToConfirm')(...params);
 
-export default stores;
+  return class RequestsToConfirmStore extends BaseStore {
+    constructor (api) {
+      super(api);
+
+      // TODO FIXME
+      // Pubsub on `signer_requestsToConfirm` doesn't fire initially, so we
+      // manually fire it up.
+      this._api.signer
+        .requestsToConfirm()
+        .then(this.setRequestsToConfirm)
+        .catch(this.setError);
+    }
+  };
+};
+
+export default requestsToConfirmFactory;
