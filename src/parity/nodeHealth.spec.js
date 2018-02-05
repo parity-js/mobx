@@ -16,11 +16,12 @@
 
 /* eslint-env jest */
 
-import NodeHealthStore, {
+import nodeHealthFactory, {
   STATUS_BAD,
   STATUS_OK,
   STATUS_WARN
-} from './NodeHealthStore';
+} from './nodeHealth';
+import { basicStoreTests } from '../utils/testHelpers';
 
 const mockHealth = {
   peers: { details: [], message: '', status: STATUS_OK },
@@ -35,8 +36,10 @@ const mockApi = {
   }
 };
 
+basicStoreTests('parity')('nodeHealth')(nodeHealthFactory)();
+
 test('should handle overall without health', () => {
-  const store = NodeHealthStore.get(mockApi);
+  const store = nodeHealthFactory().get(mockApi);
   store.setNodeHealth({});
 
   expect(store.overall).toEqual({
@@ -46,14 +49,14 @@ test('should handle overall without health', () => {
 });
 
 test('should handle overall bad', () => {
-  const store = NodeHealthStore.get(mockApi);
+  const store = nodeHealthFactory().get(mockApi);
   store.setNodeHealth({ time: mockHealth.time });
 
   expect(store.overall).toEqual({ status: STATUS_BAD, message: ['bad'] });
 });
 
 test('should handle overall needsAttention', () => {
-  const store = NodeHealthStore.get(mockApi);
+  const store = nodeHealthFactory().get(mockApi);
   store.setNodeHealth({ sync: mockHealth.sync });
 
   expect(store.overall).toEqual({
@@ -63,7 +66,7 @@ test('should handle overall needsAttention', () => {
 });
 
 test('should handle overall ok', () => {
-  const store = NodeHealthStore.get(mockApi);
+  const store = nodeHealthFactory().get(mockApi);
   store.setNodeHealth({ peers: mockHealth.peers });
 
   expect(store.overall).toEqual({ status: STATUS_OK, message: [] });

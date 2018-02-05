@@ -16,34 +16,24 @@
 
 import createMobxStore from '../utils/createMobxStore';
 
-const BaseStore = createMobxStore({
-  defaultValue: []
-})('signer_requestsToConfirm')();
+const requestsToConfirmFactory = (...params) => {
+  const BaseStore = createMobxStore({
+    defaultValue: []
+  })('signer')('requestsToConfirm')(...params);
 
-class RequestsToConfirmStore extends BaseStore {
-  constructor (api) {
-    super(api);
+  return class RequestsToConfirmStore extends BaseStore {
+    constructor (api) {
+      super(api);
 
-    // TODO FIXME
-    // Pubsub on `signer_requestsToConfirm` doesn't fire initially, so we
-    // manually fire it up.
-    this._api.signer
-      .requestsToConfirm()
-      .then(this.setRequestsToConfirm)
-      .catch(this.setError);
-  }
-
-  /**
-   * The public getter to access the Mobx store
-   * @param {Object} api The @parity/api object
-   */
-  static get (api) {
-    if (!this.instance) {
-      // We are enforcing Mobx stores to be singletons.
-      this.instance = new RequestsToConfirmStore(api);
+      // TODO FIXME
+      // Pubsub on `signer_requestsToConfirm` doesn't fire initially, so we
+      // manually fire it up.
+      this._api.signer
+        .requestsToConfirm()
+        .then(this.setRequestsToConfirm)
+        .catch(this.setError);
     }
-    return this.instance;
-  }
-}
+  };
+};
 
-export default RequestsToConfirmStore;
+export default requestsToConfirmFactory;

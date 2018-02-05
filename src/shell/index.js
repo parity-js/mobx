@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import DappsPersmissionsStore from './DappsPermissionsStore';
-import DappsStore from './DappsStore';
-
-const stores = { DappsPersmissionsStore, DappsStore };
+const stores = {};
 
 export default stores;

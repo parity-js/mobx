@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const stores = {};
+import version from './version';
+
+const stores = {
+  version
+};
 
 export default stores;

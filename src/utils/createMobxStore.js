@@ -23,11 +23,7 @@ import capitalize from './capitalize';
  * @param {String} jsonRpcMethod The JSONRPC method to create a MobX store for
  * @param {Object} storeOptions Optional options to pass when creating the MobX store
  */
-const createMobxStore = (storeOptions = {}) => jsonRpcMethod => (...params) => {
-  // Split the JSONRPC method into namespace and method
-  // E.g. parity_nodeHealth -> ['parity', 'nodeHealth']
-  const [namespace, method] = jsonRpcMethod.split('_');
-
+const createMobxStore = (storeOptions = {}) => namespace => method => {
   // Default options for MobX store
   const options = {
     variableName: method, // The name of the variable to track inside the store, e.g. "health" in nodeHealthStore.health
@@ -36,55 +32,56 @@ const createMobxStore = (storeOptions = {}) => jsonRpcMethod => (...params) => {
     ...storeOptions
   };
 
-  return class ParityMobxStore {
-    @observable error = null;
+  return (...params) =>
+    class ParityMobxStore {
+      @observable error = null;
 
-    static instance; // Ensure singleton
+      constructor (api) {
+        this._api = api;
 
-    constructor (api) {
-      this._api = api;
+        // The main observable of this store, the one tracking the pubsub values
+        // from the api
+        extendObservable(this, {
+          [options.variableName]: options.defaultValue
+        });
 
-      // The main observable of this store, the one tracking the pubsub values
-      // from the api
-      extendObservable(this, {
-        [options.variableName]: options.defaultValue
-      });
+        // Subscribe to Parity pubsub
+        this._api.pubsub[namespace][method]((error, result) => {
+          this.setError(error);
+          this[`set${capitalize(options.variableName)}`](result);
+        }, ...params);
 
-      // Subscribe to Parity pubsub
-      this._api.pubsub[namespace][method]((error, result) => {
-        this.setError(error);
-        this[`set${capitalize(options.variableName)}`](result);
-      }, ...params);
+        /**
+         * Action setter for the main variable of the store
+         * E.g. in NodeHealthStore, this would be @action setHealth()
+         */
+        this[`set${capitalize(options.variableName)}`] = action(result => {
+          this[options.variableName] = result;
+        });
+      }
+
+      static instance = null;
 
       /**
-       * Action setter for the main variable of the store
-       * E.g. in NodeHealthStore, this would be @action setHealth()
+       * The public getter to access the Mobx store
+       * @param {Object} api The @parity/api object
        */
-      this[`set${capitalize(options.variableName)}`] = action(result => {
-        this[options.variableName] = result;
-      });
-    }
-
-    /**
-     * The public getter to access the Mobx store
-     * @param {Object} api The @parity/api object
-     */
-    static get (api) {
-      if (!this.instance) {
-        // We are enforcing Mobx stores to be singletons.
-        this.instance = new ParityMobxStore(api);
+      static get (api) {
+        if (!this.instance) {
+          // We are enforcing Mobx stores to be singletons.
+          this.instance = new this(api);
+        }
+        return this.instance;
       }
-      return this.instance;
-    }
 
-    /**
-     * Action setter for the error
-     */
-    @action
-    setError (error) {
-      this.error = error;
-    }
-  };
+      /**
+       * Action setter for the error
+       */
+      @action
+      setError = error => {
+        this.error = error;
+      };
+    };
 };
 
 export default createMobxStore;

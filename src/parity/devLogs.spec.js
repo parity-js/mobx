@@ -18,13 +18,13 @@
 
 import { toJS } from 'mobx';
 
-import DevLogsStore from './DevLogsStore';
+import devLogsFactory from './devLogs';
+import { basicStoreTests } from '../utils/testHelpers';
 
 const mockDevLogs = [
   '2018-01-03 10:35:58 9/25 peers 6 MiB chain 67 MiB db 0 bytes queue 2 MiB sync RPC: 1 conn, 5 req/s, 198 µs',
   'Second Log'
 ];
-const mockError = { message: 'SOME_ERROR' };
 const mockApi = {
   pubsub: {
     parity: {
@@ -33,15 +33,10 @@ const mockApi = {
   }
 };
 
-test('should be a singleton store when using static get', () => {
-  const store1 = DevLogsStore.get(mockApi);
-  const store2 = DevLogsStore.get(mockApi);
-
-  expect(store1).toBe(store2);
-});
+basicStoreTests('parity')('devLogs')(devLogsFactory)();
 
 test('should handle addParsedLog', () => {
-  const store = new DevLogsStore(mockApi);
+  const store = devLogsFactory().get(mockApi);
   store.addParsedLog(mockDevLogs[0]);
 
   expect(store.parsedLogs[0]).toEqual({
@@ -52,54 +47,17 @@ test('should handle addParsedLog', () => {
 });
 
 test('should skip addParsedLog if log not parseable', () => {
-  const store = new DevLogsStore(mockApi);
+  const store = devLogsFactory().get(mockApi);
   store.addParsedLog(mockDevLogs[1]);
 
   expect(store.parsedLogs).toHaveLength(0);
 });
 
-test('should handle setDevLogs', () => {
-  const store = new DevLogsStore(mockApi);
-  store.setDevLogs(mockDevLogs);
-
-  expect(toJS(store.devLogs)).toEqual(mockDevLogs);
-});
-
-test('should handle setError', () => {
-  const store = new DevLogsStore(mockApi);
-  store.setError(mockError);
-
-  expect(store.error).toEqual(mockError);
-});
-
-test('should setDevLogs when pubsub publishes', () => {
+test('should addParsedLogs when pubsub publishes', () => {
   const mockPubSub = callback => {
     setTimeout(() => callback(null, mockDevLogs), 200); // Simulate pubsub with a 200ms timeout
   };
-  const store = new DevLogsStore({
-    pubsub: {
-      parity: { devLogs: mockPubSub }
-    }
-  });
-
-  expect.assertions(2);
-  return new Promise(resolve => setTimeout(resolve, 200)).then(() => {
-    expect(toJS(store.devLogs)).toEqual(mockDevLogs);
-    expect(toJS(store.parsedLogs)).toEqual([
-      {
-        date: '2018-01-03 10:35:58',
-        log:
-          ' 9/25 peers 6 MiB chain 67 MiB db 0 bytes queue 2 MiB sync RPC: 1 conn, 5 req/s, 198 µs'
-      }
-    ]);
-  });
-});
-
-test('should set error when pubsub throws error', () => {
-  const mockPubSub = callback => {
-    setTimeout(() => callback(mockError, null), 200); // Simulate pubsub with a 200ms timeout
-  };
-  const store = new DevLogsStore({
+  const store = devLogsFactory().get({
     pubsub: {
       parity: { devLogs: mockPubSub }
     }
@@ -107,6 +65,12 @@ test('should set error when pubsub throws error', () => {
 
   expect.assertions(1);
   return new Promise(resolve => setTimeout(resolve, 200)).then(() => {
-    expect(store.error).toEqual(mockError);
+    expect(toJS(store.parsedLogs)).toEqual([
+      {
+        date: '2018-01-03 10:35:58',
+        log:
+          ' 9/25 peers 6 MiB chain 67 MiB db 0 bytes queue 2 MiB sync RPC: 1 conn, 5 req/s, 198 µs'
+      }
+    ]);
   });
 });

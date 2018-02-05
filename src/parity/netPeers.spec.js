@@ -18,28 +18,25 @@
 
 import { toJS } from 'mobx';
 
-import NetPeersStore from './NetPeersStore';
+import netPeersFactory from './netPeers';
+import { basicStoreTests } from '../utils/testHelpers';
 
 const mockApi = {
   pubsub: {
     parity: { netPeers: () => {} }
-  },
-  parity: {
-    acceptNonReservedPeers: jest.fn(),
-    addReservedPeer: jest.fn(),
-    dropNonReservedPeers: jest.fn(),
-    removeReservedPeer: jest.fn()
   }
 };
 
+basicStoreTests('parity')('netPeers')(netPeersFactory)();
+
 test('should handle realPeers when netPeers is not set', () => {
-  const store = NetPeersStore.get(mockApi);
+  const store = netPeersFactory().get(mockApi);
 
   expect(toJS(store.realPeers)).toEqual([]);
 });
 
 test('should handle realPeers correctly', () => {
-  const store = NetPeersStore.get(mockApi);
+  const store = netPeersFactory().get(mockApi);
   const realPeers = [
     {
       id: '4',
@@ -75,32 +72,4 @@ test('should handle realPeers correctly', () => {
   });
 
   expect(toJS(store.realPeers)).toEqual(realPeers);
-});
-
-test('should handle acceptNonReservedPeers', () => {
-  const store = NetPeersStore.get(mockApi);
-  store.acceptNonReservedPeers();
-
-  expect(mockApi.parity.acceptNonReservedPeers).toHaveBeenCalledWith();
-});
-
-test('should handle addReservedPeer', () => {
-  const store = NetPeersStore.get(mockApi);
-  store.addReservedPeer('Foo');
-
-  expect(mockApi.parity.addReservedPeer).toHaveBeenCalledWith('Foo');
-});
-
-test('should handle dropNonReservedPeers', () => {
-  const store = NetPeersStore.get(mockApi);
-  store.dropNonReservedPeers();
-
-  expect(mockApi.parity.dropNonReservedPeers).toHaveBeenCalledWith();
-});
-
-test('should handle removeReservedPeer', () => {
-  const store = NetPeersStore.get(mockApi);
-  store.removeReservedPeer('Foo');
-
-  expect(mockApi.parity.removeReservedPeer).toHaveBeenCalledWith('Foo');
 });
