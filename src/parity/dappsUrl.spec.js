@@ -29,11 +29,29 @@ const mockApi = {
 
 basicStoreTests('parity')('dappsUrl')(dappsUrlFactory)();
 
-test('should handle fullUrl with partial dappsUrl', () => {
+test('should return null if no dappsUrl', () => {
+  const store = dappsUrlFactory().get(mockApi);
+
+  expect(store.fullUrl).toEqual(null);
+});
+
+test('should handle fullUrl with partial dappsUrl in about: protocol', () => {
   const store = dappsUrlFactory().get(mockApi);
   store.setDappsUrl('127.0.0.1:8545');
 
   expect(store.fullUrl).toEqual('http://127.0.0.1:8545'); // Protocol is about:// in tests
+});
+
+test('should handle fullUrl with partial dappsUrl in https: protocol', () => {
+  const store = dappsUrlFactory().get(mockApi);
+  // Mock window.location.protocol
+  Object.defineProperty(window.location, 'protocol', {
+    writable: true,
+    value: 'https:'
+  });
+  store.setDappsUrl('127.0.0.1:8545');
+
+  expect(store.fullUrl).toEqual('https://127.0.0.1:8545'); // Protocol is about:// in tests
 });
 
 test('should handle fullUrl with full dappsUrl', () => {
