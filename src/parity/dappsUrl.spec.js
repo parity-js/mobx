@@ -33,7 +33,7 @@ test('should handle fullUrl with partial dappsUrl', () => {
   const store = dappsUrlFactory().get(mockApi);
   store.setDappsUrl('127.0.0.1:8545');
 
-  expect(store.fullUrl).toEqual('about://127.0.0.1:8545'); // Protocol is about:// in tests
+  expect(store.fullUrl).toEqual('http://127.0.0.1:8545'); // Protocol is about:// in tests
 });
 
 test('should handle fullUrl with full dappsUrl', () => {
