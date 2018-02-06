@@ -18,7 +18,7 @@ import { computed } from 'mobx';
 import createMobxStore from '../utils/createMobxStore';
 
 const dappsUrlFactory = (...params) => {
-  const BaseStore = createMobxStore({})('parity')('dappsUrl')(...params);
+  const BaseStore = createMobxStore()('parity')('dappsUrl')(...params);
 
   return class DappsUrlStore extends BaseStore {
     /**
@@ -26,9 +26,13 @@ const dappsUrlFactory = (...params) => {
      */
     @computed
     get fullUrl () {
-      return this.dappsUrl && this.dappsUrl.includes('//')
-        ? this.dappsUrl
-        : `${window.location.protocol}//${this.dappsUrl}`;
+      if (!this.dappsUrl) return null;
+
+      if (this.dappsUrl.includes('//')) return this.dappsUrl;
+
+      return window.location.protocol.includes('http')
+        ? `${window.location.protocol}//${this.dappsUrl}`
+        : `http://${this.dappsUrl}`; // Default to http
     }
   };
 };
