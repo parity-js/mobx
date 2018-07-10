@@ -1,7 +1,7 @@
 {
   "name": "@parity/mobx",
   "description": "Parity MobX Stores",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "lib/index.js",
   "module": "lib/index.js",
   "jsnext:main": "lib/index.js",
