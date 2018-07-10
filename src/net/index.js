@@ -17,6 +17,7 @@
 import version from './version';
 
 const stores = {
+  peerCount: createMobxStore({ defaultValue: 0 })('net')('peerCount'),
   version
 };
 
