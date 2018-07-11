@@ -18,7 +18,6 @@ import createMobxStore from '../utils/createMobxStore';
 import dappsUrl from './dappsUrl';
 import devLogs from './devLogs';
 import netPeers from './netPeers';
-import nodeHealth from './nodeHealth';
 
 const stores = {
   allAccountsInfo: createMobxStore({ defaultValue: {} })('parity')(
@@ -26,8 +25,7 @@ const stores = {
   ),
   dappsUrl,
   devLogs,
-  netPeers,
-  nodeHealth
+  netPeers
 };
 
 export default stores;

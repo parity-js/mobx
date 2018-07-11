@@ -26,7 +26,7 @@ import capitalize from './capitalize';
 const createMobxStore = (storeOptions = {}) => namespace => method => {
   // Default options for MobX store
   const options = {
-    variableName: method, // The name of the variable to track inside the store, e.g. "health" in nodeHealthStore.health
+    variableName: method, // The name of the variable to track inside the store, e.g. "coinbase" in CoinbaseStore.coinbase
     defaultValue: null, // The initial value of that variable
     displayName: `${capitalize(method)}Store`, // A nice name for the store, not used for now
     ...storeOptions
@@ -53,7 +53,7 @@ const createMobxStore = (storeOptions = {}) => namespace => method => {
 
         /**
          * Action setter for the main variable of the store
-         * E.g. in NodeHealthStore, this would be @action setHealth()
+         * E.g. in CoinbaseStore, this would be @action setCoinbase()
          */
         this[`set${capitalize(options.variableName)}`] = action(result => {
           this[options.variableName] = result;
