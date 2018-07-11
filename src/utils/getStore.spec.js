@@ -28,7 +28,7 @@ const mockApi = {
       fakeVariable: () => {},
       fakeVariable1: () => {},
       fakeVariable2: () => {},
-      nodeHealth: () => {}
+      coinbase: () => {}
     }
   }
 };
@@ -58,22 +58,16 @@ test('should be a singleton store when same rpc method and same params', () => {
   expect(store1).toBe(store2);
 });
 
-test('should take parity NodeHealthStore from the parity folder', () => {
-  const store = getStore('parity')('nodeHealth')().get(mockApi);
-
-  expect(store.nodeHealth).toEqual({}); // Has defaultValue overridden
-});
-
-test('should create 2 NodeHealth stores with different params', () => {
-  const store1 = getStore('parity')('nodeHealth')('params1').get(mockApi);
-  const store2 = getStore('parity')('nodeHealth')('params2').get(mockApi);
+test('should create 2 coinbase stores with different params', () => {
+  const store1 = getStore('parity')('coinbase')('params1').get(mockApi);
+  const store2 = getStore('parity')('coinbase')('params2').get(mockApi);
 
   expect(store1).not.toBe(store2);
 });
 
-test('should return singleton NodeHealth stores with same params', () => {
-  const store1 = getStore('parity')('nodeHealth')().get(mockApi);
-  const store2 = getStore('parity')('nodeHealth')().get(mockApi);
+test('should return singleton coinbase stores with same params', () => {
+  const store1 = getStore('parity')('coinbase')().get(mockApi);
+  const store2 = getStore('parity')('coinbase')().get(mockApi);
 
   expect(store1).toBe(store2);
 });

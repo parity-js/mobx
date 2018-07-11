@@ -27,6 +27,6 @@ And the syncing state will be re-rendered automatically on each new pubsub publi
 ## Notes
 
 - Each JSONRPC method defined in the [Wiki's spec](https://wiki.parity.io/JSONRPC) has its own MobX store.
-- The name of the observable variable in the store is the part after the `_` in the RPC method. For example, the MobX store for `eth_syncing` has an observable variable named `syncing`, the MobX store for `parity_nodeHealth` has an observable variable named `nodeHealth`, etc.
-- Some stores have additional `@computed` properties, e.g. `stores.parity.nodeHealth()`, `stores.parity.dappsUrl()`... More doc coming soon.
+- The name of the observable variable in the store is the part after the `_` in the RPC method. For example, the MobX store for `eth_syncing` has an observable variable named `syncing`, the MobX store for `parity_enode` has an observable variable named `enode`, etc.
+- Some stores have additional `@computed` properties, e.g. `stores.parity.dappsUrl()`... More doc coming soon.
 - Each MobX store is a singleton, and can be accessed with the `.get()` method: `store.eth.syncing().get()`.
