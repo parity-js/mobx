@@ -51,7 +51,7 @@
   "dependencies": {
     "@parity/jsonrpc": "^2.1.5",
     "@parity/ledger": "^2.1.2",
-    "@parity/shared": "^2.2.23"
+    "@parity/shared": "^3.0.1"
   },
   "peerDependencies": {
     "mobx": "^3.4.1"
