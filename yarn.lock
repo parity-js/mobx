@@ -81,8 +81,8 @@
     to-fast-properties "^2.0.0"
 
 "@parity/jsonrpc@^2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@parity/jsonrpc/-/jsonrpc-2.1.5.tgz#9d2bedff6e90859dcc56f83c8a31042c4dd44849"
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@parity/jsonrpc/-/jsonrpc-2.1.6.tgz#260bbe7dfcec18d59f0bf1668dfd6021452d6452"
 
 "@parity/ledger@^2.1.2", "@parity/ledger@~2.1.3":
   version "2.1.3"
