@@ -46,7 +46,7 @@
     "makeshift": "^1.1.0",
     "mobx": "^3.4.1",
     "rimraf": "^2.6.2",
-    "semistandard": "^13.0.1"
+    "semistandard": "^14.0.1"
   },
   "dependencies": {
     "@parity/jsonrpc": "^2.1.5",
